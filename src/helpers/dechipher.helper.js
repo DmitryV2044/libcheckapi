@@ -8,7 +8,7 @@ const dechipherLibtakers = async (libtakers) => {
     try{
       libtakers[i].name = Cryptographer.instance.DecodeString(libtakers[i].name)
       libtakers[i].surname = Cryptographer.instance.DecodeString(libtakers[i].surname)
-      // libtakers[i].third_name = Cryptographer.instance.DecodeString(libtakers[i].name)
+      libtakers[i].third_name = Cryptographer.instance.DecodeString(libtakers[i]?.third_name)
     }
     catch{
       console.log('error occured when dechipher libtaker, skipping...')
