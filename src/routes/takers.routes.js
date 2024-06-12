@@ -1,11 +1,18 @@
 import express from "express";
 import { Cryptographer } from "../services/cryptography.service.js";
+import { authenticateToken } from "../middleware/auth.middleware.js";
+import { createTaker, getTakers, takeBook } from "../controllers/takers.controller.js";
 
 const router = express.Router();
 
-router.get('/encode', (req, res, next) => {
-  const encoded = Cryptographer.instance?.EncodeString(req.query.string)
-  res.send({result: encoded})
-})
+router.get('/get', authenticateToken, getTakers)
+
+router.put('/create', authenticateToken, createTaker)
+
+router.put('/takeBook', authenticateToken, takeBook)
+
+// router.get('/get', getTakers)
+
+
 
 export default router;

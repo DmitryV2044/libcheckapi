@@ -1,8 +1,6 @@
-import { JWT_Secret } from "../cryptoConfig.js";
 import jwt from 'jsonwebtoken'
-import organisationService from '../services/organisation.service.js'
-import userService from '../services/user.service.js'
 
+const JWT_Secret = process.env.JWT_Secret
 
 export function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization']
@@ -10,11 +8,11 @@ export function authenticateToken(req, res, next) {
   
     if (token == null) return res.sendStatus(401)
   
-    jwt.verify(token, JWT_Secret, (err, {userId}) => {
+    jwt.verify(token, JWT_Secret, (err, {usid}) => {
       if (err) return res.sendStatus(403)
       req.user = { id: null }
       // console.log('userId in token: ' + userId)
-      req.user.id = userId
+      req.user.id = usid
       next()
     })
 }
@@ -69,50 +67,3 @@ export function authenticateResetToken(req, res, next)
   })
 }
 
-export async function checkAdminRole(req, res, next)
-{
-  const userId = req.user.id,
-    authorId = req.body.author_id
-
-  if(authorId == null || undefined) 
-    return res.sendStatus(400)
-    
-  const query = await userService.getUserOrganisations(userId)
-
-  if(query.organisations == undefined || null)
-    return res.sendStatus(403)
-
-  const usrOrg = JSON.parse(query?.organisations);
-
-  // console.log('aid: '+ authorId)
-  const valid = usrOrg?.indexOf(Number(authorId)) != -1
-
-  if(!valid || (usrOrg == undefined || null))
-    return res.sendStatus(403)
-  
-  // console.log('query result: ' + JSON.parse(query.organisations))
-  
-  next()
-}
-
-export async function checkAdminRoleAny(req, res, next)
-{
-  const userId = req.user.id;
-
-  const query = await userService.getUserOrganisations(userId)
-  
-  if(query.organisations == undefined || null)
-    return res.sendStatus(403)
-
-  const usrOrg = JSON.parse(query?.organisations);
-
-  const valid = usrOrg?.length
-  // console.log('l: ' + usrOrg?.length)
-
-  if(!valid || (usrOrg == undefined || null))
-    return res.sendStatus(403)
-  
-  // console.log('query result: ' + JSON.parse(query.organisations))
-  
-  next()
-}
