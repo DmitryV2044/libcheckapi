@@ -19,7 +19,6 @@ const buildQueryForParams = (parameters) => {
         console.log('unauthorized parameter, skipping')
         continue;
       }
-      console.log(`checking for: ${key}`)
 
       if(TakerEncryptedFileds.includes(key))
         values = values.concat(Cryptographer.instance.EncodeString(value))

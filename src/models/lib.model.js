@@ -1,5 +1,4 @@
 import db from "../database.js";
-import { Cryptographer } from "../services/cryptography.service.js";
 
 const TABLE_NAME = 'public.libraries'
 

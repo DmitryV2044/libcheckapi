@@ -1,4 +1,3 @@
-// import { JWT_Secret } from "../cryptoConfig.js";
 import jwt from 'jsonwebtoken'
 import { JWT_Secret } from '../app.js';
 

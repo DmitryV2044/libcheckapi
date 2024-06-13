@@ -1,12 +1,10 @@
 import { TakersDb } from "../models/takers.model.js";
 import { buildQueryForParams } from "../helpers/dbquery.helper.js";
 import { getLibForAdmin } from "../helpers/lib_admin_coordination.helper.js";
-import { Cryptographer } from "./cryptography.service.js";
 import { dechipherLibtakers } from "../helpers/dechipher.helper.js";
-import { createActionRecord } from "../helpers/actions.helper.js";
+import { extractActionData } from "../helpers/actions.helper.js";
 
 const getTakersByParams = async (admin_id, params) => {
-  
   const lib = await getLibForAdmin(admin_id)
 
   const db = new TakersDb(lib.takers_tb)
@@ -28,7 +26,6 @@ const getTakersByParams = async (admin_id, params) => {
  */
 const createNewTaker = async (admin_id, regData) => {
   const lib = await getLibForAdmin(admin_id)
-  console.log(lib.takers_tb)
   const db = new TakersDb(lib.takers_tb)
 
   const user = await db.CreateUser({...regData});
@@ -36,22 +33,23 @@ const createNewTaker = async (admin_id, regData) => {
   return { user: user, code: 200, error: '' };
 };
 
-const takeNewBook = async ({admin_id, taker_id, book_id}) => {
-  const lib = await getLibForAdmin(admin_id);
+const extractTakerData = async (admin_id, taker_id) => {
+  const lib = await getLibForAdmin(admin_id)
   const db = new TakersDb(lib.takers_tb)
-  const taker = await db.GetById(taker_id)
 
-  taker.actions = JSON.parse(taker.actions)
-  const action = createActionRecord(book_id, 1)
-  taker.actions = taker.actions.concat(action)
-  
-  db.RewriteActions(taker_id, JSON.stringify(taker.actions))
+  /**
+   * @type {Libtaker}
+   */
+  const taker = await db.GetById(taker_id);
+  const dTaker = (await dechipherLibtakers([taker]))[0]
+  console.log(dTaker)
 
-  return {taker: taker, action_done: action}
+  const result = await extractActionData(dTaker.actions)
+  return result
 }
 
 export{
   getTakersByParams,
   createNewTaker,
-  takeNewBook
+  extractTakerData
 }

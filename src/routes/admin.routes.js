@@ -8,7 +8,6 @@ router.post('/reg', registrateAdmin)
 
 router.post('/login', loginAdmin)
 
-// router.post('/editLogin', loginAdmin)
-
+// router.post('/editLogin', )
 
 export default router;

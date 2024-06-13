@@ -1,4 +1,4 @@
-import { createNewTaker, getTakersByParams, takeNewBook } from "../services/takers.service.js"
+import { createNewTaker, extractTakerData, getTakersByParams } from "../services/takers.service.js"
 
 const getTakers = async (req, res, next) => {
   const usid = req.user.id
@@ -14,17 +14,15 @@ const createTaker = async (req, res, next) => {
   return res.status(200).json({success: true, req_usid: usid, result: await createNewTaker(usid, req.body)})
 }
 
-const takeBook = async (req, res, next) => {
-  const usid = req.user.id
-  const params = req.body
-  const result = await takeNewBook({...params, admin_id: usid})
+const extractActionData = async (req, res, next) => {
+  const usid = req.user.id;
+  const result = await extractTakerData(usid, req.body.id)
 
-  return res.status(200).json({success: true, req_usid: usid, result: result})
-
+  res.status(200).json({success: true, data: result})
 }
 
 export {
   getTakers,
   createTaker,
-  takeBook
+  extractActionData
 }

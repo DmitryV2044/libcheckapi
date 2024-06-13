@@ -1,11 +1,9 @@
 import db from "../database.js";
 import { Cryptographer } from "../services/cryptography.service.js";
+import { CustomDb } from "./customdb.model.js";
 
-export class TakersDb
+export class TakersDb extends CustomDb
 { 
-  constructor(table_name){
-    this.table_name = `public.${table_name}`
-  }
 
   async RewriteActions(taker_id, actions) {
     try{
@@ -16,50 +14,6 @@ export class TakersDb
       return {...e, error_occured: true};
     }
   }
-
-  async GetAll()
-  {
-    try{
-      return (await db.query(`SELECT * FROM ${this.table_name} `)).rows
-    }
-    catch(e)
-    {
-      return {...e, error_occured: true};
-    }
-  }
-
-  /**
-   * 
-   * @param {*} param0 
-   * @returns {Promise<Array<Libtaker>>}
-   */
-  async GetAllByQuery({query, values})
-  {
-    try{
-      return (await db.query(`SELECT * FROM ${this.table_name} ` + query, values)).rows
-    }
-    catch(e)
-    {
-      return {...e, error_occured: true};
-    }
-  }
-
-  /**
-   * 
-   * @param {number | string} id 
-   * @returns {Promise<Libtaker>}
-   */
-  async GetById(id)
-  {
-    try{
-      return (await db.query(`SELECT * FROM ${this.table_name} WHERE id = $1`, [id])).rows[0]
-    }
-    catch(e)
-    {
-      return {...e, error_occured: true};
-    }
-  }
-
 
 
   async CreateUser({name, surname, third_name = null, grade = null, role = null}) {
@@ -85,14 +39,3 @@ export class TakersDb
 }
 
 }
-
-// const TABLE_NAME = 'public.libadmins'
-
-// const getAll = async () =>
-//   (await db.query(`SELECT * FROM ${TABLE_NAME}`)).rows
-
-//   const getAllFiltered = async (params) =>
-//   (await db.query(`SELECT * FROM ${TABLE_NAME}`)).rows
-
-// const getAdminById = async (id) =>
-//   (await db.query(`SELECT * FROM ${TABLE_NAME} WHERE id = $1`, [id])).rows[0]
